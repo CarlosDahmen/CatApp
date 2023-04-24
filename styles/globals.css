@@ -25,3 +25,58 @@ body {
     )
     rgb(var(--background-start-rgb));
 }
+
+.buttons-container {
+  display: flex;
+  margin-top: 30px;
+  justify-content: space-around;
+}
+
+input[type="button"] {
+  background-color: white;
+  color: black;
+  width: 30%;
+  border-radius: 4px;
+}
+
+button:hover {
+  opacity: 80%;
+}
+
+h1 {
+  align-self: center;
+  font-size: 2rem;
+}
+
+label {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  padding: 40px;
+  height: 100vh;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 40vw;
+}
+
+input {
+  height: 40px;
+  border-radius: 4px;
+  padding-left: 5px;
+  color: black;
+}
