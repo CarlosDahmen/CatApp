@@ -1,9 +1,54 @@
-import { Inter } from "next/font/google";
 import Link from "next/link";
-
-const inter = Inter({ subsets: ["latin"] });
+import { initFirebase } from "@/services/firebase";
+import {
+  signInWithEmailAndPassword,
+  getAuth,
+  onAuthStateChanged,
+} from "firebase/auth";
+import { useState } from "react";
 
 export default function Home() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+
+  initFirebase();
+
+  const emailHandler = (evt) => {
+    setEmail(evt.target.value);
+  };
+
+  const passwordHandler = (evt) => {
+    setPassword(evt.target.value);
+  };
+
+  const loginHandler = async () => {
+    const auth = getAuth();
+
+    try {
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+    } catch (error) {
+      console.log(error.message);
+      setErrorMessage(error.message);
+    }
+  };
+
+  const authMonitor = async () => {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        console.log(user);
+        showApp();
+        showLoginState(user);
+      } else {
+        showLoginForm();
+      }
+    });
+  };
+
   return (
     <main className="main">
       <h1>My App</h1>
@@ -12,16 +57,30 @@ export default function Home() {
           <label htmlFor="username">Username:</label>
           <input
             type="text"
-            id="username"
-            name="username"
-            placeholder="Enter your username"
+            id="email"
+            name="email"
+            placeholder="Enter your email"
+            onChange={emailHandler}
           />
 
           <label htmlFor="password">Password:</label>
-          <input type="password" placeholder="Enter password"></input>
+          <input
+            type="password"
+            placeholder="Enter password"
+            onChange={passwordHandler}
+          ></input>
+
+          <label
+            visibility={errorMessage === "" ? "hidden" : "visible"}
+            id="errorMessage"
+          >
+            {errorMessage}
+          </label>
 
           <div className="buttons-container">
-            <button type="button">Log In</button>
+            <button type="button" onClick={loginHandler}>
+              Log In
+            </button>
             <button type="button">
               <Link href="/signup">Sign Up</Link>
             </button>
