@@ -1,18 +1,15 @@
 import Link from "next/link";
-import { initFirebase } from "@/services/firebase";
-import {
-  signInWithEmailAndPassword,
-  getAuth,
-  onAuthStateChanged,
-} from "firebase/auth";
+
+import { signInWithEmailAndPassword, getAuth } from "firebase/auth";
 import { useState } from "react";
+import { useRouter } from "next/router";
 
 export default function Home() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
-  initFirebase();
+  const router = useRouter();
 
   const emailHandler = (evt) => {
     setEmail(evt.target.value);
@@ -26,27 +23,21 @@ export default function Home() {
     const auth = getAuth();
 
     try {
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
+      if (email && password) {
+        const userCredential = await signInWithEmailAndPassword(
+          auth,
+          email,
+          password
+        );
+        // Navigate the user to the Home page
+        router.push("/home");
+      } else setErrorMessage("Enter Email and Password");
     } catch (error) {
       console.log(error.message);
-      setErrorMessage(error.message);
+      setErrorMessage(
+        "Error with credentials! check your username and password"
+      );
     }
-  };
-
-  const authMonitor = async () => {
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        console.log(user);
-        showApp();
-        showLoginState(user);
-      } else {
-        showLoginForm();
-      }
-    });
   };
 
   return (
