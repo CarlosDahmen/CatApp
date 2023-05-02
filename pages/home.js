@@ -3,11 +3,14 @@ import Card from "@/components/Card";
 import styles from "../styles/home.module.css";
 import { getAuth, signOut, onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/router";
-import { getUserData, addToUserFavorites } from "@/services/firebase";
+import {
+  getUserData,
+  editFavorites,
+  getUserDataWatcher,
+} from "@/services/firebase";
 
 export default function Home() {
   const [breeds, setBreeds] = useState([]);
-  const [username, setUsername] = useState("");
   const [favorites, setFavorites] = useState([]);
   const [user, setUser] = useState({});
 
@@ -57,18 +60,37 @@ export default function Home() {
   };
 
   const getFavorites = useCallback(async () => {
-    const userFavorites = await getUserData(user.uid);
-    setFavorites(userFavorites);
+    const sucessCb = (snapshot) => {
+      const data = snapshot.val();
+
+      if (data) {
+        setFavorites(data.favorite_ids);
+      } else {
+        setFavorites([]);
+      }
+    };
+
+    const errorCb = (error) => {
+      console.log("Error updating userData in watcher", error);
+    };
+
+    await getUserDataWatcher(user.uid, sucessCb, errorCb);
   }, [user]);
 
   useEffect(() => {
-    setUsername(user.displayName);
     getFavorites();
+
+    return getFavorites;
   }, [getFavorites, user]);
 
   const addCatToFavorites = (catId) => {
     const newFavorites = [...favorites, catId];
-    addToUserFavorites(user.uid, newFavorites);
+    editFavorites(user.uid, newFavorites);
+  };
+
+  const removeCatFromFavorites = (catId) => {
+    const newFavorites = favorites.filter((cat) => cat !== catId);
+    editFavorites(user.uid, newFavorites);
   };
 
   const logout = async () => {
@@ -78,7 +100,7 @@ export default function Home() {
   return (
     <div className="home">
       <header>
-        <h2>Welcome, {username}</h2>
+        <h2>Welcome, {user.displayName}</h2>
         <button onClick={logout}>Logout</button>
       </header>
 
@@ -96,7 +118,8 @@ export default function Home() {
                 lifespan={breed.life_span}
                 origin={breed.origin}
                 favorite={favorites.includes(breed.id)}
-                handleHeartClick={addCatToFavorites}
+                addCatToFavorites={addCatToFavorites}
+                removeCatFromFavorites={removeCatFromFavorites}
               />
             );
           })}

@@ -14,8 +14,17 @@ function Card({
   lifespan,
   origin,
   favorite,
-  handleHeartClick,
+  addCatToFavorites,
+  removeCatFromFavorites,
 }) {
+  const heartClickhandler = (id) => {
+    if (favorite) {
+      removeCatFromFavorites(id);
+    } else {
+      addCatToFavorites(id);
+    }
+  };
+
   return (
     <div className={styles.card}>
       <div>
@@ -31,7 +40,7 @@ function Card({
               <Image
                 src={favorite ? liked : heart}
                 alt="heart icon"
-                onClick={() => handleHeartClick(id)}
+                onClick={() => heartClickhandler(id)}
               ></Image>
             </div>
             <p>Country of Origin: {origin}</p>

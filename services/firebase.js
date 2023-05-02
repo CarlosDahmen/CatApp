@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getDatabase, ref, child, get, update, push } from "firebase/database";
+import { getDatabase, ref, update, onValue } from "firebase/database";
 import { getAuth } from "firebase/auth";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -22,32 +22,18 @@ export const initFirebase = () => {
   const database = getDatabase(app);
 };
 
-export const getUserData = (userId) => {
-  const dbRef = ref(getDatabase());
-  return get(child(dbRef, `users/${userId}`))
-    .then((snapshot) => {
-      if (snapshot.exists()) {
-        return snapshot.val().favorite_ids;
-      } else {
-        console.log("No data available");
-      }
-    })
-    .catch((error) => {
-      console.error(error);
-    });
+export const getUserDataWatcher = (userId, sucessCb, errorCb) => {
+  if (userId !== undefined) {
+    const db = getDatabase();
+    const favoritesRef = ref(db, "users/" + userId);
+    const onSubscribe = onValue(favoritesRef, sucessCb, errorCb);
+    return onSubscribe;
+  }
 };
 
-export const addToUserFavorites = (userId, favorites) => {
+export const editFavorites = (userId, favorites) => {
   const db = getDatabase();
   const updates = {};
   updates[`users/${userId}/favorite_ids`] = favorites;
-  // push(child(ref(db), `users/${userId}/favorite_ids`));
   return update(ref(db), updates);
 };
-
-//push(child(ref(db), 'posts')
-
-// export const removeFromUserFavorites = (userId) => {
-//   const db = getDatabase();
-
-// }
