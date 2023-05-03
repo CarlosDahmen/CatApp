@@ -3,17 +3,14 @@ import Card from "@/components/Card";
 import styles from "../styles/home.module.css";
 import { getAuth, signOut, onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/router";
-import {
-  getUserData,
-  editFavorites,
-  getUserDataWatcher,
-} from "@/services/firebase";
+import { editFavorites, getUserDataWatcher } from "@/services/firebase";
 
 export default function Home() {
   const [breeds, setBreeds] = useState([]);
   const [favorites, setFavorites] = useState([]);
   const [user, setUser] = useState({});
-
+  const [filter, setFilter] = useState(false);
+  const [allBreeds, setAllBreeds] = useState([]);
   const auth = getAuth();
   const API_KEY = process.env.API_KEY;
   const router = useRouter();
@@ -34,7 +31,8 @@ export default function Home() {
         };
       });
 
-      setBreeds(dataWithImage);
+      setAllBreeds(dataWithImage);
+      setBreeds(allBreeds);
     } catch (error) {
       console.log("Error fetching API DATA", error);
     }
@@ -93,6 +91,13 @@ export default function Home() {
     editFavorites(user.uid, newFavorites);
   };
 
+  const toggleFavorites = () => {
+    filter
+      ? setBreeds(allBreeds)
+      : setBreeds(breeds.filter((breed) => favorites.includes(breed.id)));
+    setFilter(!filter);
+  };
+
   const logout = async () => {
     await signOut(auth);
   };
@@ -101,6 +106,9 @@ export default function Home() {
     <div className="home">
       <header>
         <h2>Welcome, {user.displayName}</h2>
+        <button onClick={toggleFavorites}>
+          {filter ? "Show All Breeds" : "Show favorite Breeds"}
+        </button>
         <button onClick={logout}>Logout</button>
       </header>
 

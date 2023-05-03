@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import Image from "next/image";
 import styles from "../styles/card.module.css";
 import Tag from "./Tag";
@@ -29,9 +29,11 @@ function Card({
     <div className={styles.card}>
       <div>
         <div className={styles.cover}>
-          <img
+          <Image
             className={styles.cover_image}
             src={imageUrl}
+            width={300}
+            height={300}
             alt="Breed Image"
           />
           <div className={styles.text}>
