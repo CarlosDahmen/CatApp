@@ -4,6 +4,8 @@ import styles from "../styles/home.module.css";
 import { getAuth, signOut, onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/router";
 import { editFavorites, getUserDataWatcher } from "@/services/firebase";
+import Tag from "@/components/Tag";
+import { allTemperaments } from "@/services/temperaments";
 
 export default function Home() {
   const [breeds, setBreeds] = useState([]);
@@ -12,9 +14,11 @@ export default function Home() {
   const [filter, setFilter] = useState(false);
   const [allBreeds, setAllBreeds] = useState([]);
   const [name, setName] = useState("");
+  const [temperamentFilters, setTemperamentFilters] = useState([]);
   const auth = getAuth();
   const API_KEY = process.env.API_KEY;
   const router = useRouter();
+  // const temperament = breed.temperament.split(", ");
 
   const fetchBreeds = async () => {
     try {
@@ -38,15 +42,6 @@ export default function Home() {
       console.log("Error fetching API DATA", error);
     }
   };
-
-  useEffect(() => {
-    fetchBreeds();
-    authMonitor();
-
-    return () => {
-      authMonitor();
-    };
-  }, []);
 
   const authMonitor = () => {
     onAuthStateChanged(auth, (user) => {
@@ -76,12 +71,6 @@ export default function Home() {
     await getUserDataWatcher(user.uid, sucessCb, errorCb);
   }, [user]);
 
-  useEffect(() => {
-    getFavorites();
-
-    return getFavorites;
-  }, [getFavorites, user]);
-
   const addCatToFavorites = (catId) => {
     const newFavorites = [...favorites, catId];
     editFavorites(user.uid, newFavorites);
@@ -99,6 +88,25 @@ export default function Home() {
     setFilter(!filter);
   };
 
+  // const toggleByTemperament = (temperamentTrait) => {
+  //   setFilterByTemperament(!filterByTemperament);
+  //   filterByTemperament
+  //     ? console.log("here")
+  //     : setBreeds(
+  //         breeds.filter(
+  //           (breed) => !breed.temperament.includes(temperamentTrait)
+  //         )
+  //       );
+  // };
+
+  const addToTemperamentFilter = (tag) => {
+    if (!temperamentFilters.includes(tag)) {
+      setTemperamentFilters([...temperamentFilters, tag]);
+    } else {
+      setTemperamentFilters(temperamentFilters.filter((item) => item !== tag));
+    }
+  };
+
   const nameHandler = (evt) => {
     setName(evt.target.value);
     setBreeds(
@@ -112,11 +120,25 @@ export default function Home() {
     await signOut(auth);
   };
 
+  useEffect(() => {
+    fetchBreeds();
+    authMonitor();
+
+    return () => {
+      authMonitor();
+    };
+  }, []);
+
+  useEffect(() => {
+    getFavorites();
+    return getFavorites;
+  }, [getFavorites, user]);
+
   return (
     <div className="home">
       <header>
         <h2>Welcome, {user.displayName}</h2>
-        <button onClick={toggleFavorites}>
+        <button onClick={() => toggleFavorites}>
           {filter ? "Show All Breeds" : "Show favorite Breeds"}
         </button>
         <button onClick={logout}>Logout</button>
@@ -131,6 +153,23 @@ export default function Home() {
           placeholder="Type Breed Name here"
           onChange={nameHandler}
         />
+      </div>
+
+      <div>
+        <label htmlFor="filter_by_tag">
+          Filter by Temperament Characteristic:
+        </label>
+        <div className={styles.tags_container}>
+          {allTemperaments.map((tag) => {
+            return (
+              <Tag
+                key={tag}
+                tag={tag}
+                addToTemperamentFilter={addToTemperamentFilter}
+              />
+            );
+          })}
+        </div>
       </div>
 
       <div className={styles.cards_container}>
