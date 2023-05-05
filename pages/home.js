@@ -11,6 +11,7 @@ export default function Home() {
   const [user, setUser] = useState({});
   const [filter, setFilter] = useState(false);
   const [allBreeds, setAllBreeds] = useState([]);
+  const [name, setName] = useState("");
   const auth = getAuth();
   const API_KEY = process.env.API_KEY;
   const router = useRouter();
@@ -32,7 +33,7 @@ export default function Home() {
       });
 
       setAllBreeds(dataWithImage);
-      setBreeds(allBreeds);
+      setBreeds(dataWithImage);
     } catch (error) {
       console.log("Error fetching API DATA", error);
     }
@@ -98,6 +99,15 @@ export default function Home() {
     setFilter(!filter);
   };
 
+  const nameHandler = (evt) => {
+    setName(evt.target.value);
+    setBreeds(
+      allBreeds.filter((breed) =>
+        breed.name.toLowerCase().includes(name.toLowerCase())
+      )
+    );
+  };
+
   const logout = async () => {
     await signOut(auth);
   };
@@ -111,6 +121,17 @@ export default function Home() {
         </button>
         <button onClick={logout}>Logout</button>
       </header>
+
+      <div>
+        <label htmlFor="name">Filter by Breed Name:</label>
+        <input
+          type="text"
+          id="name"
+          name="name"
+          placeholder="Type Breed Name here"
+          onChange={nameHandler}
+        />
+      </div>
 
       <div className={styles.cards_container}>
         {breeds.length !== 0 &&
