@@ -88,6 +88,25 @@ export default function Home() {
     setFilter(!filter);
   };
 
+  useEffect(() => {
+    let newFilteredBreeds = [];
+    const filteredBreeds = temperamentFilters.map((temperamentFilter) => {
+      const secondFilter = allBreeds.filter((breed) => {
+        const breedTemps = breed.temperament.split(", ");
+        const loweCasedBreedTemps = breedTemps.map((temp) =>
+          temp.toLowerCase()
+        );
+
+        if (loweCasedBreedTemps.includes(temperamentFilter)) {
+          return breed;
+        }
+      });
+      let newFilteredBreeds = secondFilter;
+      console.log("SECOND", secondFilter);
+      setBreeds(secondFilter);
+    });
+  }, [temperamentFilters]);
+
   // const toggleByTemperament = (temperamentTrait) => {
   //   setFilterByTemperament(!filterByTemperament);
   //   filterByTemperament
@@ -166,6 +185,7 @@ export default function Home() {
                 key={tag}
                 tag={tag}
                 addToTemperamentFilter={addToTemperamentFilter}
+                selected={temperamentFilters.includes(tag)}
               />
             );
           })}
