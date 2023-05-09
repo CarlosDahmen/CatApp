@@ -25,42 +25,44 @@ function Card({
     }
   };
 
-  return (
-    <div className={styles.card}>
-      <div>
-        <div className={styles.cover}>
-          <Image
-            className={styles.cover_image}
-            src={imageUrl}
-            width={300}
-            height={300}
-            alt="Breed Image"
-          />
-          <div className={styles.text}>
-            <div className={styles.title_container}>
-              <p className={styles.title}>{name}</p>
-              <Image
-                src={favorite ? liked : heart}
-                alt="heart icon"
-                onClick={() => heartClickhandler(id)}
-              ></Image>
+  if (temperament) {
+    return (
+      <div className={styles.card}>
+        <div>
+          <div className={styles.cover}>
+            <Image
+              className={styles.cover_image}
+              src={imageUrl}
+              width={300}
+              height={300}
+              alt="Breed Image"
+            />
+            <div className={styles.text}>
+              <div className={styles.title_container}>
+                <p className={styles.title}>{name}</p>
+                <Image
+                  src={favorite ? liked : heart}
+                  alt="heart icon"
+                  onClick={() => heartClickhandler(id)}
+                ></Image>
+              </div>
+              <p>Country of Origin: {origin}</p>
+              <p>Life Span: {lifespan} years</p>
             </div>
-            <p>Country of Origin: {origin}</p>
-            <p>Life Span: {lifespan} years</p>
+          </div>
+          <div className={styles.tags_container}>
+            <label>Temperament:</label>
+            <div className={styles.tags}>
+              {temperament.map((tag) => {
+                return <Tag key={tag} tag={tag} />;
+              })}
+            </div>
           </div>
         </div>
-        <div className={styles.tags_container}>
-          <label>Temperament:</label>
-          <div className={styles.tags}>
-            {temperament.map((tag) => {
-              return <Tag key={tag} tag={tag} />;
-            })}
-          </div>
-        </div>
+        <div className={styles.descriptions}>{description}</div>
       </div>
-      <div className={styles.descriptions}>{description}</div>
-    </div>
-  );
+    );
+  }
 }
 
 export default Card;

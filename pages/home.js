@@ -36,8 +36,14 @@ export default function Home() {
         };
       });
 
-      setAllBreeds(dataWithImage);
-      setBreeds(dataWithImage);
+      const breedsData = dataWithImage.map((breed) => {
+        const temperamentArray = breed.temperament.toLowerCase().split(", ");
+        breed.temperament = temperamentArray;
+        return breed;
+      });
+
+      setAllBreeds(breedsData);
+      setBreeds(breedsData);
     } catch (error) {
       console.log("Error fetching API DATA", error);
     }
@@ -88,35 +94,18 @@ export default function Home() {
     setFilter(!filter);
   };
 
-  useEffect(() => {
-    let newFilteredBreeds = [];
-    const filteredBreeds = temperamentFilters.map((temperamentFilter) => {
-      const secondFilter = allBreeds.filter((breed) => {
-        const breedTemps = breed.temperament.split(", ");
-        const loweCasedBreedTemps = breedTemps.map((temp) =>
-          temp.toLowerCase()
-        );
-
-        if (loweCasedBreedTemps.includes(temperamentFilter)) {
-          return breed;
-        }
-      });
-      let newFilteredBreeds = secondFilter;
-      console.log("SECOND", secondFilter);
-      setBreeds(secondFilter);
+  const filterBreeds = () => {
+    const toFilter = allBreeds;
+    const newArray = [];
+    toFilter.forEach((breed) => {
+      if (
+        temperamentFilters.every((trait) => breed.temperament.includes(trait))
+      ) {
+        newArray.push(breed);
+      }
     });
-  }, [temperamentFilters]);
-
-  // const toggleByTemperament = (temperamentTrait) => {
-  //   setFilterByTemperament(!filterByTemperament);
-  //   filterByTemperament
-  //     ? console.log("here")
-  //     : setBreeds(
-  //         breeds.filter(
-  //           (breed) => !breed.temperament.includes(temperamentTrait)
-  //         )
-  //       );
-  // };
+    setBreeds(newArray);
+  };
 
   const addToTemperamentFilter = (tag) => {
     if (!temperamentFilters.includes(tag)) {
@@ -138,6 +127,10 @@ export default function Home() {
   const logout = async () => {
     await signOut(auth);
   };
+
+  useEffect(() => {
+    filterBreeds();
+  }, [temperamentFilters]);
 
   useEffect(() => {
     fetchBreeds();
@@ -201,7 +194,7 @@ export default function Home() {
                 id={breed.id}
                 name={breed.name}
                 imageUrl={breed.imageUrl}
-                temperament={breed.temperament.split(", ")}
+                temperament={breed.temperament}
                 description={breed.description}
                 lifespan={breed.life_span}
                 origin={breed.origin}
