@@ -186,24 +186,25 @@ export default function Home() {
       </div>
 
       <div className={styles.cards_container}>
-        {breeds.length !== 0 &&
-          breeds.map((breed) => {
-            return (
-              <Card
-                key={breed.id}
-                id={breed.id}
-                name={breed.name}
-                imageUrl={breed.imageUrl}
-                temperament={breed.temperament}
-                description={breed.description}
-                lifespan={breed.life_span}
-                origin={breed.origin}
-                favorite={favorites.includes(breed.id)}
-                addCatToFavorites={addCatToFavorites}
-                removeCatFromFavorites={removeCatFromFavorites}
-              />
-            );
-          })}
+        {breeds.length === 0
+          ? "No breeds match the selected traits"
+          : breeds.map((breed) => {
+              return (
+                <Card
+                  key={breed.id}
+                  id={breed.id}
+                  name={breed.name}
+                  imageUrl={breed.imageUrl}
+                  temperament={breed.temperament}
+                  description={breed.description}
+                  lifespan={breed.life_span}
+                  origin={breed.origin}
+                  favorite={favorites.includes(breed.id)}
+                  addCatToFavorites={addCatToFavorites}
+                  removeCatFromFavorites={removeCatFromFavorites}
+                />
+              );
+            })}
       </div>
     </div>
   );
