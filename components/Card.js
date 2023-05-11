@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import styles from "../styles/card.module.css";
 import Tag from "./Tag";
@@ -17,6 +17,8 @@ function Card({
   addCatToFavorites,
   removeCatFromFavorites,
 }) {
+  const [src, setSrc] = useState(imageUrl);
+
   const heartClickhandler = (id) => {
     if (favorite) {
       removeCatFromFavorites(id);
@@ -32,10 +34,15 @@ function Card({
           <div className={styles.cover}>
             <Image
               className={styles.cover_image}
-              src={imageUrl}
+              src={src}
               width={300}
               height={300}
               alt="Breed Image"
+              onError={() =>
+                setSrc(
+                  "https://media.istockphoto.com/id/1097490360/vector/vector-illustration-of-cute-black-cat.jpg?s=612x612&w=0&k=20&c=Ef0qYl79aZJ6NJXJVbJ0onjXVNnSyqrN_TKPjieAIGE="
+                )
+              }
             />
             <div className={styles.text}>
               <div className={styles.title_container}>
