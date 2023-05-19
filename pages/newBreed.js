@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { allTemperaments } from "@/services/temperaments";
 import Tag from "@/components/Tag";
 import styles from "../styles/tag.module.css";
 import formStyles from "../styles/newBreed.module.css";
 import { createBreed } from "../services/firebase";
+import { toast } from "react-toastify";
+import { useRouter } from "next/router";
 
 const NewBreed = () => {
   const [name, setName] = useState("");
@@ -13,6 +15,9 @@ const NewBreed = () => {
   const [temperaments, setTemperaments] = useState([]);
   const [description, setDescription] = useState("");
   const [imgUrl, setImgUrl] = useState("");
+  const [valid, setValid] = useState(false);
+
+  const router = useRouter();
 
   const nameHandler = (evt) => {
     setName(evt.target.value);
@@ -35,7 +40,7 @@ const NewBreed = () => {
   };
 
   const imgUrlHandler = (evt) => {
-    setImgUrl(evt.targer.value);
+    setImgUrl(evt.target.value);
   };
 
   const temperamentsHandler = (tag) => {
@@ -46,6 +51,20 @@ const NewBreed = () => {
       setTemperaments(temperaments.filter((item) => item !== tag));
     }
   };
+
+  useEffect(() => {
+    if (
+      name.length > 0 &&
+      origin.length > 0 &&
+      lifeSpan.length > 0 &&
+      temperaments.length > 0 &&
+      description.length > 0
+    ) {
+      setValid(true);
+    } else {
+      setValid(false);
+    }
+  }, [name, origin, lifeSpan, temperaments, description, imgUrl]);
 
   const createHandler = async () => {
     try {
@@ -58,13 +77,23 @@ const NewBreed = () => {
         imgUrl,
       };
       await createBreed(id, newBreedObject);
+      toast.success("Breed Created Successfully!");
+      setTimeout(() => {
+        router.push("/home");
+      }, 5000);
     } catch (error) {
+      toast.error("Error updating the Database");
       console.log(error.message);
     }
   };
 
   return (
     <div className="main">
+      {!valid && (
+        <p className={formStyles.message}>
+          The form must be filled out to submit
+        </p>
+      )}
       <form className={formStyles.form}>
         <label htmlFor="name">Name:</label>
         <input
@@ -73,6 +102,7 @@ const NewBreed = () => {
           name="name"
           placeholder="Enter the new breed's name"
           onChange={nameHandler}
+          required
         />
 
         <label htmlFor="origin">Origin:</label>
@@ -82,6 +112,7 @@ const NewBreed = () => {
           name="origin"
           placeholder="Enter the breed's origin"
           onChange={originHandler}
+          required
         />
 
         <label htmlFor="id">Id:</label>
@@ -89,6 +120,7 @@ const NewBreed = () => {
           type="text"
           placeholder="Enter breed id"
           onChange={idHandler}
+          required
         ></input>
 
         <label htmlFor="id">Lifespan:</label>
@@ -96,9 +128,10 @@ const NewBreed = () => {
           type="text"
           placeholder="Enter breed lifespan"
           onChange={lifeSpanHandler}
+          required
         ></input>
 
-        <label htmlFor="imgUrl">Image Url:</label>
+        <label htmlFor="imgUrl">Image Url: (optional)</label>
         <input
           type="text"
           placeholder="Enter image url"
@@ -110,6 +143,7 @@ const NewBreed = () => {
           type="text"
           placeholder="Enter breed description"
           onChange={descriptionHandler}
+          required
         ></input>
 
         <label>Select temperament Traits:</label>
@@ -127,7 +161,7 @@ const NewBreed = () => {
         </div>
 
         <div className="buttons-container">
-          <button type="button" onClick={createHandler}>
+          <button disabled={!valid} type="button" onClick={createHandler}>
             Create
           </button>
         </div>

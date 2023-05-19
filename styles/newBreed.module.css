@@ -5,3 +5,7 @@
   gap: 10px;
   justify-content: center;
 }
+
+.message {
+  color: red;
+}
