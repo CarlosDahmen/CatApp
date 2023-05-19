@@ -38,4 +38,9 @@ export const editFavorites = (userId, favorites) => {
   return update(ref(db), updates);
 };
 
-// export const editBreeds = (breedId,)
+export const createBreed = (newBreedId, newBreedObject) => {
+  const db = getDatabase();
+  const updates = {};
+  updates[`breeds/${newBreedId}`] = newBreedObject;
+  return update(ref(db), updates);
+};

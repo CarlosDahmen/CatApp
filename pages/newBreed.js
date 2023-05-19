@@ -3,6 +3,7 @@ import { allTemperaments } from "@/services/temperaments";
 import Tag from "@/components/Tag";
 import styles from "../styles/tag.module.css";
 import formStyles from "../styles/newBreed.module.css";
+import { createBreed } from "../services/firebase";
 
 const NewBreed = () => {
   const [name, setName] = useState("");
@@ -33,6 +34,10 @@ const NewBreed = () => {
     setDescription(evt.target.value);
   };
 
+  const imgUrlHandler = (evt) => {
+    setImgUrl(evt.targer.value);
+  };
+
   const temperamentsHandler = (tag) => {
     const newTemperaments = temperaments;
     if (!newTemperaments.includes(tag)) {
@@ -43,23 +48,25 @@ const NewBreed = () => {
   };
 
   const createHandler = async () => {
-    // const auth = getAuth();
-    // try {
-    //   await createUserWithoriginAndid(auth, origin, id);
-    //   await updateProfile(auth.currentUser, {
-    //     displayName: name,
-    //   });
-    //   console.log(auth.currentUser);
-    // } catch (error) {
-    //   console.log(error.message);
-    //   setLifeSpan(error.message);
-    // }
+    try {
+      const newBreedObject = {
+        name,
+        origin,
+        lifeSpan,
+        temperaments,
+        description,
+        imgUrl,
+      };
+      await createBreed(id, newBreedObject);
+    } catch (error) {
+      console.log(error.message);
+    }
   };
 
   return (
     <div className="main">
       <form className={formStyles.form}>
-        <label htmlFor="name">name:</label>
+        <label htmlFor="name">Name:</label>
         <input
           type="text"
           id="name"
@@ -68,7 +75,7 @@ const NewBreed = () => {
           onChange={nameHandler}
         />
 
-        <label htmlFor="origin">origin:</label>
+        <label htmlFor="origin">Origin:</label>
         <input
           type="text"
           id="origin"
@@ -77,23 +84,30 @@ const NewBreed = () => {
           onChange={originHandler}
         />
 
-        <label htmlFor="id">id:</label>
+        <label htmlFor="id">Id:</label>
         <input
-          type="id"
+          type="text"
           placeholder="Enter breed id"
           onChange={idHandler}
         ></input>
 
-        <label htmlFor="id">lifespan:</label>
+        <label htmlFor="id">Lifespan:</label>
         <input
-          type="id"
+          type="text"
           placeholder="Enter breed lifespan"
           onChange={lifeSpanHandler}
         ></input>
 
-        <label htmlFor="description">description:</label>
+        <label htmlFor="imgUrl">Image Url:</label>
         <input
-          type="id"
+          type="text"
+          placeholder="Enter image url"
+          onChange={imgUrlHandler}
+        ></input>
+
+        <label htmlFor="description">Description:</label>
+        <input
+          type="text"
           placeholder="Enter breed description"
           onChange={descriptionHandler}
         ></input>
