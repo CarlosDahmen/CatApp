@@ -37,3 +37,5 @@ export const editFavorites = (userId, favorites) => {
   updates[`users/${userId}/favorite_ids`] = favorites;
   return update(ref(db), updates);
 };
+
+// export const editBreeds = (breedId,)

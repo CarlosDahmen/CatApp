@@ -177,7 +177,7 @@ export default function Home() {
               <Tag
                 key={tag}
                 tag={tag}
-                addToTemperamentFilter={addToTemperamentFilter}
+                onClick={addToTemperamentFilter}
                 selected={temperamentFilters.includes(tag)}
               />
             );
