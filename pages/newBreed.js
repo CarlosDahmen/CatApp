@@ -37,6 +37,8 @@ const NewBreed = () => {
     const newTemperaments = temperaments;
     if (!newTemperaments.includes(tag)) {
       setTemperaments([...newTemperaments, tag]);
+    } else {
+      setTemperaments(temperaments.filter((item) => item !== tag));
     }
   };
 
@@ -99,7 +101,14 @@ const NewBreed = () => {
         <label>Select temperament Traits:</label>
         <div className={styles.tags_container}>
           {allTemperaments.map((tag) => {
-            return <Tag key={tag} tag={tag} onClick={temperamentsHandler} />;
+            return (
+              <Tag
+                key={tag}
+                tag={tag}
+                onClick={temperamentsHandler}
+                selected={temperaments.includes(tag)}
+              />
+            );
           })}
         </div>
 
