@@ -6,7 +6,7 @@ import { getAuth } from "firebase/auth";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyAeMtztReue3SAqs-ohujmcXwIruj0Xgog",
+  apiKey: process.env.API_KEY,
   authDomain: "authproject-f59d6.firebaseapp.com",
   projectId: "authproject-f59d6",
   storageBucket: "authproject-f59d6.appspot.com",
@@ -29,6 +29,13 @@ export const getUserDataWatcher = (userId, sucessCb, errorCb) => {
     const onSubscribe = onValue(favoritesRef, sucessCb, errorCb);
     return onSubscribe;
   }
+};
+
+export const getBreeds = (sucessCb, errorCb) => {
+  const db = getDatabase();
+  const breedsRef = ref(db, "breeds/");
+  const onSubscribe = onValue(breedsRef, successCb, errorCb);
+  return onSubscribe;
 };
 
 export const editFavorites = (userId, favorites) => {

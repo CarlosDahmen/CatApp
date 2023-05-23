@@ -3,7 +3,11 @@ import Card from "@/components/Card";
 import styles from "../styles/home.module.css";
 import { getAuth, signOut, onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/router";
-import { editFavorites, getUserDataWatcher } from "@/services/firebase";
+import {
+  editFavorites,
+  getUserDataWatcher,
+  getBreeds,
+} from "@/services/firebase";
 import Tag from "@/components/Tag";
 import { allTemperaments } from "@/services/temperaments";
 
@@ -44,6 +48,7 @@ export default function Home() {
 
       setAllBreeds(breedsData);
       setBreeds(breedsData);
+      getDatabaseBreeds();
     } catch (error) {
       console.log("Error fetching API DATA", error);
     }
@@ -77,6 +82,23 @@ export default function Home() {
     await getUserDataWatcher(user.uid, sucessCb, errorCb);
   }, [user]);
 
+  const getDatabaseBreeds = useCallback(async () => {
+    const successCb = (snapshot) => {
+      const data = snapshot.val();
+
+      if (data) {
+        const apiBreeds = allBreeds;
+        setAllBreeds(apiBreeds.concat(data));
+      }
+    };
+
+    const errorCb = (error) => {
+      console.log("Error updating userData in watcher", error);
+    };
+
+    await getBreeds(successCb, errorCb);
+  }, [allBreeds]);
+
   const addCatToFavorites = (catId) => {
     const newFavorites = [...favorites, catId];
     editFavorites(user.uid, newFavorites);
@@ -91,7 +113,9 @@ export default function Home() {
     filter
       ? setBreeds(allBreeds)
       : setBreeds(breeds.filter((breed) => favorites.includes(breed.id)));
+    console.log(filter);
     setFilter(!filter);
+    console.log(filter);
   };
 
   const filterBreeds = () => {
@@ -150,7 +174,7 @@ export default function Home() {
     <div className="home">
       <header>
         <h2>Welcome, {user.displayName}</h2>
-        <button onClick={() => toggleFavorites}>
+        <button onClick={toggleFavorites}>
           {filter ? "Show All Breeds" : "Show favorite Breeds"}
         </button>
         <button onClick={logout}>Logout</button>
