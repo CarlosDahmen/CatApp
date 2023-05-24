@@ -4,9 +4,11 @@ import { getAuth } from "firebase/auth";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
+const API_KEY = process.env.NEXT_PUBLIC_FIREBASE_API_KEY;
+
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: process.env.API_KEY,
+  apiKey: API_KEY,
   authDomain: "authproject-f59d6.firebaseapp.com",
   projectId: "authproject-f59d6",
   storageBucket: "authproject-f59d6.appspot.com",
@@ -31,7 +33,7 @@ export const getUserDataWatcher = (userId, sucessCb, errorCb) => {
   }
 };
 
-export const getBreeds = (sucessCb, errorCb) => {
+export const getBreeds = (successCb, errorCb) => {
   const db = getDatabase();
   const breedsRef = ref(db, "breeds/");
   const onSubscribe = onValue(breedsRef, successCb, errorCb);

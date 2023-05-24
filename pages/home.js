@@ -22,7 +22,6 @@ export default function Home() {
   const auth = getAuth();
   const API_KEY = process.env.API_KEY;
   const router = useRouter();
-  // const temperament = breed.temperament.split(", ");
 
   const fetchBreeds = async () => {
     try {
@@ -88,7 +87,7 @@ export default function Home() {
 
       if (data) {
         const apiBreeds = allBreeds;
-        setAllBreeds(apiBreeds.concat(data));
+        // setDbBreeds(apiBreeds.concat(data));
       }
     };
 
@@ -113,9 +112,7 @@ export default function Home() {
     filter
       ? setBreeds(allBreeds)
       : setBreeds(breeds.filter((breed) => favorites.includes(breed.id)));
-    console.log(filter);
     setFilter(!filter);
-    console.log(filter);
   };
 
   const filterBreeds = () => {
@@ -141,12 +138,17 @@ export default function Home() {
 
   const nameHandler = (evt) => {
     setName(evt.target.value);
-    setBreeds(
-      allBreeds.filter((breed) =>
-        breed.name.toLowerCase().includes(name.toLowerCase())
-      )
-    );
   };
+
+  useEffect(() => {
+    let filteredNames = [];
+    allBreeds.forEach((breed) => {
+      if (breed.name.toLowerCase().includes(name)) {
+        filteredNames.push(breed);
+      }
+    });
+    setBreeds(filteredNames);
+  }, [name]);
 
   const logout = async () => {
     await signOut(auth);
