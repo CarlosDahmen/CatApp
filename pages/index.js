@@ -45,7 +45,7 @@ export default function Home() {
       <h1>My App</h1>
       <div className="container">
         <form className="form">
-          <label htmlFor="username">Username:</label>
+          <label htmlFor="email">Email:</label>
           <input
             type="text"
             id="email"

@@ -12,7 +12,7 @@ const NewBreed = () => {
   const [origin, setOrigin] = useState("");
   const [id, setId] = useState("");
   const [lifeSpan, setLifeSpan] = useState("");
-  const [temperaments, setTemperaments] = useState([]);
+  const [temperament, setTemperament] = useState([]);
   const [description, setDescription] = useState("");
   const [imgUrl, setImgUrl] = useState("");
   const [valid, setValid] = useState(false);
@@ -43,12 +43,12 @@ const NewBreed = () => {
     setImgUrl(evt.target.value);
   };
 
-  const temperamentsHandler = (tag) => {
-    const newTemperaments = temperaments;
-    if (!newTemperaments.includes(tag)) {
-      setTemperaments([...newTemperaments, tag]);
+  const temperamentHandler = (tag) => {
+    const newTemperament = temperament;
+    if (!newTemperament.includes(tag)) {
+      setTemperament([...newTemperament, tag]);
     } else {
-      setTemperaments(temperaments.filter((item) => item !== tag));
+      setTemperament(temperament.filter((item) => item !== tag));
     }
   };
 
@@ -57,14 +57,14 @@ const NewBreed = () => {
       name.length > 0 &&
       origin.length > 0 &&
       lifeSpan.length > 0 &&
-      temperaments.length > 0 &&
+      temperament.length > 0 &&
       description.length > 0
     ) {
       setValid(true);
     } else {
       setValid(false);
     }
-  }, [name, origin, lifeSpan, temperaments, description, imgUrl]);
+  }, [name, origin, lifeSpan, temperament, description, imgUrl]);
 
   const createHandler = async () => {
     try {
@@ -72,7 +72,7 @@ const NewBreed = () => {
         name,
         origin,
         lifeSpan,
-        temperaments,
+        temperament,
         description,
         imgUrl,
       };
@@ -153,8 +153,8 @@ const NewBreed = () => {
               <Tag
                 key={tag}
                 tag={tag}
-                onClick={temperamentsHandler}
-                selected={temperaments.includes(tag)}
+                onClick={temperamentHandler}
+                selected={temperament.includes(tag)}
               />
             );
           })}

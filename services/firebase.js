@@ -36,8 +36,7 @@ export const getUserDataWatcher = (userId, sucessCb, errorCb) => {
 export const getBreeds = (successCb, errorCb) => {
   const db = getDatabase();
   const breedsRef = ref(db, "breeds/");
-  const onSubscribe = onValue(breedsRef, successCb, errorCb);
-  return onSubscribe;
+  return onValue(breedsRef, successCb, errorCb);
 };
 
 export const editFavorites = (userId, favorites) => {

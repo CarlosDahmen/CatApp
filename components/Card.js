@@ -27,6 +27,20 @@ function Card({
     }
   };
 
+  // const setImage = () => {
+  //   if (imageUrl && imageUrl.length) {
+  //     return imageUrl;
+  //   }
+
+  //   if (!(imageUrl && imageUrl.length)) {
+  //     return "https://media.istockphoto.com/id/1097490360/vector/vector-illustration-of-cute-black-cat.jpg?s=612x612&w=0&k=20&c=Ef0qYl79aZJ6NJXJVbJ0onjXVNnSyqrN_TKPjieAIGE=";
+  //   }
+
+  //   if (src) {
+  //     return src;
+  //   }
+  // };
+
   if (temperament) {
     return (
       <div className={styles.card}>
@@ -69,6 +83,8 @@ function Card({
         <div className={styles.descriptions}>{description}</div>
       </div>
     );
+  } else {
+    return <div>No Temperament! so no cards!</div>;
   }
 }
 

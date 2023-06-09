@@ -45,9 +45,7 @@ export default function Home() {
         return breed;
       });
 
-      setAllBreeds(breedsData);
-      setBreeds(breedsData);
-      getDatabaseBreeds();
+      await getDatabaseBreeds(breedsData, setAllBreeds, setBreeds);
     } catch (error) {
       console.log("Error fetching API DATA", error);
     }
@@ -81,13 +79,19 @@ export default function Home() {
     await getUserDataWatcher(user.uid, sucessCb, errorCb);
   }, [user]);
 
-  const getDatabaseBreeds = useCallback(async () => {
+  const getDatabaseBreeds = async (breedsData, setAllBreeds, setBreeds) => {
     const successCb = (snapshot) => {
-      const data = snapshot.val();
+      let breedsFromDB = [];
+      snapshot.forEach((breed) => {
+        const data = breed.val();
+        breedsFromDB.push(data);
+      });
 
-      if (data) {
-        const apiBreeds = allBreeds;
-        // setDbBreeds(apiBreeds.concat(data));
+      if (breedsFromDB.length !== 0) {
+        const all = breedsData.concat(breedsFromDB);
+        console.log(all);
+        setAllBreeds(breedsData.concat(breedsFromDB));
+        setBreeds(breedsData.concat(breedsFromDB));
       }
     };
 
@@ -95,8 +99,12 @@ export default function Home() {
       console.log("Error updating userData in watcher", error);
     };
 
-    await getBreeds(successCb, errorCb);
-  }, [allBreeds]);
+    try {
+      await getBreeds(successCb, errorCb);
+    } catch (err) {
+      errorCb(err);
+    }
+  };
 
   const addCatToFavorites = (catId) => {
     const newFavorites = [...favorites, catId];
@@ -154,6 +162,10 @@ export default function Home() {
     await signOut(auth);
   };
 
+  const create = () => {
+    router.push("/newBreed");
+  };
+
   useEffect(() => {
     filterBreeds();
   }, [temperamentFilters]);
@@ -179,6 +191,7 @@ export default function Home() {
         <button onClick={toggleFavorites}>
           {filter ? "Show All Breeds" : "Show favorite Breeds"}
         </button>
+        <button onClick={create}>Create New Breed</button>
         <button onClick={logout}>Logout</button>
       </header>
 
@@ -214,10 +227,10 @@ export default function Home() {
       <div className={styles.cards_container}>
         {breeds.length === 0
           ? "No breeds match the selected traits"
-          : breeds.map((breed) => {
+          : breeds.map((breed, idx) => {
               return (
                 <Card
-                  key={breed.id}
+                  key={idx}
                   id={breed.id}
                   name={breed.name}
                   imageUrl={breed.imageUrl}
